@@ -33,7 +33,7 @@ class handler(BaseHTTPRequestHandler):
         json_data = df.to_dict(orient="records")
 
         # Opción: exportar CSV en la raíz pública
-        df.to_csv("/tmp/eth_1h.csv", index=False)
+        df.to_csv("/eth_1h.csv", index=False)
 
         # Responder JSON
         self.send_response(200)
