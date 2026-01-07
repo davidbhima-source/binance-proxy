@@ -1,5 +1,8 @@
 import * as crypto from "crypto";
 
+
+info = Client(tld='us').get_historical_klines(symbol, timeframe, starting_date);
+
 export const BINANCE_BASE = "https://api.binance.com";
 
 export function hmacSha256(payload) {
