@@ -1,4 +1,4 @@
-import { BINANCE_BASE, requireProxyKey, hmacSha256 } from "./_utils.js";
+import { BINANCE_BASE, requireProxyKey, hmacSha256 } from "_utils.js";
 
 export default async function handler(req, res) {
   try {
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const signature = hmacSha256(params.toString()); // GET: payload = query string :contentReference[oaicite:4]{index=4}
     params.set("signature", signature);
 
-    const url = `${BINANCE_BASE}/api/v3/account?${params.toString()}`;
+    const url = `${BINANCE_BASE}/api/account?${params.toString()}`;
     const r = await fetch(url, {
       headers: { "X-MBX-APIKEY": process.env.BINANCE_API_KEY }
     });
