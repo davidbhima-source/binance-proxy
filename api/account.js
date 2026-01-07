@@ -1,4 +1,4 @@
-import { BINANCE_BASE, requireProxyKey, hmacSha256 } from "_utils.js";
+import { BINANCE_BASE, requireProxyKey, hmacSha256 } from "./_utils.js";
 
 export default async function handler(req, res) {
   try {
