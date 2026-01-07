@@ -1,12 +1,3 @@
 {
-  "regions": ["fra1"],    
-  "builds": [
-    {
-      "src": "api/eth_data.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    { "src": "/api/eth_data", "dest": "api/eth_data.py" }
-  ]
+  "regions": ["fra1"]
 }
