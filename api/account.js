@@ -1,9 +1,7 @@
-import { BINANCE_BASE, requireProxyKey, hmacSha256 } from "./_utils.js";
+import { BINANCE_BASE, hmacSha256 } from "./_utils.js";
 
 export default async function handler(req, res) {
   try {
-    if (!requireProxyKey(req, res)) return;
-
     const apiKey = process.env.BINANCE_API_KEY;
     const apiSecret = process.env.BINANCE_API_SECRET;
 
@@ -17,20 +15,19 @@ export default async function handler(req, res) {
       });
     }
 
-    const timestamp = Date.now();
-
     const params = new URLSearchParams({
-      timestamp: String(timestamp),
+      timestamp: String(Date.now()),
       recvWindow: "5000",
     });
 
+    // Firma del query string (SIGNED endpoint) 
     const signature = hmacSha256(params.toString());
     params.set("signature", signature);
 
     const url = `${BINANCE_BASE}/api/v3/account?${params.toString()}`;
 
     const r = await fetch(url, {
-      headers: { "X-MBX-APIKEY": apiKey },
+      headers: { "X-MBX-APIKEY": apiKey }, // Header requerido 
     });
 
     const text = await r.text();
@@ -41,7 +38,7 @@ export default async function handler(req, res) {
       data = { raw: text };
     }
 
-    // Para endpoints privados, mejor no cachear
+    // No cachear info privada
     res.setHeader("Cache-Control", "no-store");
     res.status(r.status).json(data);
   } catch (e) {
