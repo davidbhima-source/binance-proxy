@@ -1,19 +1,13 @@
 from binance.client import Client
 import pandas as pd
 import os
-from datetime import datetime
-from http.server import BaseHTTPRequestHandler
 import json
 
-# 🔒 Cargar claves desde variables de entorno
-API_KEY = os.getenv("BINANCE_API_KEY")
-API_SECRET = os.getenv("BINANCE_API_SECRET")
+def handler(request, response):
+    try:
+        client = Client(os.getenv("BINANCE_API_KEY"), os.getenv("BINANCE_API_SECRET"))
 
-class handler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        client = Client(API_KEY, API_SECRET)
-
-        # Obtener velas ETHUSDT 1h (1 diciembre 2025)
+        # Obtener velas ETHUSDT 1h del 1 Dic 2025
         klines = client.get_historical_klines(
             "ETHUSDT",
             Client.KLINE_INTERVAL_1HOUR,
@@ -29,15 +23,15 @@ class handler(BaseHTTPRequestHandler):
         df["open_time"] = pd.to_datetime(df["open_time"], unit="ms")
         df = df[["open_time","open","high","low","close","volume"]]
 
-        # Exportar a JSON plano (para mí)
-        json_data = df.to_dict(orient="records")
+        data = df.to_dict(orient="records")
 
-        # Opción: exportar CSV en la raíz pública
-        df.to_csv("/tmp/eth_1h.csv", index=False)
+        response.status_code = 200
+        response.headers["Content-Type"] = "application/json"
+        response.body = json.dumps(data)
+        return response
 
-        # Responder JSON
-        self.send_response(200)
-        self.send_header('Content-type','application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps(json_data).encode())
-        return
+    except Exception as e:
+        response.status_code = 500
+        response.body = json.dumps({"error": str(e)})
+        return response
+
